@@ -6,7 +6,9 @@ readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "django>=6.0.1",
+    "django-unfold>=0.76.0",
     "djangorestframework>=3.16.1",
     "psycopg[binary]>=3.3.2",
     "uvicorn[standard]>=0.40.0",
+    "whitenoise>=6.11.0",
 ]
