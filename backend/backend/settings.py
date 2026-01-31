@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
@@ -31,6 +30,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    "corsheaders",
     "unfold",
     'django.contrib.admin',
     'django.contrib.auth',
@@ -47,7 +47,10 @@ UNFOLD = {
     "SITE_TITLE": "Admin",
 }
 
+
+
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -77,6 +80,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",      # React dev
+    "http://127.0.0.1:3000",
+    "https://your-frontend.com",
+]
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
