@@ -19,5 +19,8 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # DRF Browsable API 的 login/logout 按鈕
+    path('api-auth/', include('rest_framework.urls')),
     path('api/userextend/', include('UserExtend.urls')),
+    path('api/mq/', include('mq.urls')),
 ]

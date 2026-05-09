@@ -1,11 +1,16 @@
 from django.contrib import admin
-from .models import UserInfo
+from .models import UserInfo, department
 
-# Register your models here.
 
-admin.site.register(UserInfo)
-
+# UserInfo admin (要先定義 class 再 register)
+@admin.register(UserInfo)
 class UserInfoAdmin(admin.ModelAdmin):
-    list_display = ('username', 'email', 'first_name', 'last_name', 'is_active')
-    search_fields = ('username', 'email', 'first_name', 'last_name')
-    list_filter = ('is_active',)
+    list_display = ('id', 'user', 'phone', 'location', 'department')
+    search_fields = ('user__username', 'user__email', 'phone', 'location')
+    list_filter = ('department',)
+
+
+@admin.register(department)
+class DepartmentAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'supervisor')
+    search_fields = ('name',)
