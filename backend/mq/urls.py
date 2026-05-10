@@ -1,7 +1,7 @@
 from django.urls import path
-from . import views
+from .views import EHSMainTableDetailView
 
 urlpatterns = [
     # 發送訊息到 queue
-    path('publish/', views.publish_message, name='mq-publish'),
+    path('publish/', EHSMainTableDetailView.as_view(), name='mq-publish'),
 ]

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -31,7 +32,7 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     "corsheaders",
-    "unfold",
+    "jazzmin",  # 必須放在 django.contrib.admin 之前
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -50,6 +51,26 @@ RABBITMQ_PORT = 5672
 RABBITMQ_USER = 'guest'
 RABBITMQ_PASSWORD = 'guest'
 RABBITMQ_VHOST = '/'
+
+# Redis cache 設定
+REDIS_URL = 'redis://127.0.0.1:6379/1'  # DB 1 給 cache 用
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': REDIS_URL,
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            # key 連線失敗時不會拋例外, 直接 cache miss
+            'IGNORE_EXCEPTIONS': True,
+        },
+        'KEY_PREFIX': 'backend',  # 避免不同專案撞 key
+        'TIMEOUT': 300,            # 預設 5 分鐘過期
+    }
+}
+
+# session 也存 redis (可選, 不要可刪)
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'default'
 
 # DRF 設定
 REST_FRAMEWORK = {
@@ -78,9 +99,63 @@ REST_FRAMEWORK = {
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S',
 }
 
-UNFOLD = {
-    "SITE_HEADER": "My System",
-    "SITE_TITLE": "Admin",
+# JWT (simplejwt) 設定
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),       # access token 有效 1 小時
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),       # refresh token 有效 7 天
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': False,
+    'AUTH_HEADER_TYPES': ('Bearer',),                  # header: Authorization: Bearer xxx
+}
+
+# Jazzmin admin 主題設定
+JAZZMIN_SETTINGS = {
+    "site_title": "Admin",
+    "site_header": "Gaia 後台",
+    "site_brand": "Gaia 後台",
+    "welcome_sign": "Welcome to Gaia",
+    "copyright": "Gaia",
+    # 搜尋欄要搜的 model
+    "search_model": ["auth.User"],
+    # 上方選單
+    "topmenu_links": [
+        {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"model": "auth.User"},
+    ],
+    # 側邊選單顯示順序
+    "order_with_respect_to": ["auth", "UserExtend"],
+    # 圖示 (FontAwesome)
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "auth.Group": "fas fa-users",
+    },
+    # "show_ui_builder": True,  # 右上角會多一個 UI 設計器, 不要可關掉
+}
+
+# Jazzmin UI 細部樣式
+JAZZMIN_UI_TWEAKS = {
+    "theme": "default",  # 先用 default 試, 確定能跑再換: flatly / darkly / cosmo ...
+    "navbar_small_text": False,
+    "footer_small_text": False,
+    "body_small_text": False,
+    "brand_small_text": False,
+    "brand_colour": False,
+    "accent": "accent-primary",
+    "navbar": "navbar-white navbar-light",
+    "no_navbar_border": False,
+    "navbar_fixed": True,         # 固定上方 navbar
+    "layout_boxed": False,        # 不要 boxed 版型 (避免兩邊留白)
+    "footer_fixed": False,
+    "sidebar_fixed": True,        # 固定側邊欄
+    "sidebar": "sidebar-dark-primary",
+    "sidebar_nav_small_text": False,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": False,
+    "sidebar_nav_compact_style": False,
+    "sidebar_nav_legacy_style": False,
+    "sidebar_nav_flat_style": False,
+    "actions_sticky_top": False,
 }
 
 

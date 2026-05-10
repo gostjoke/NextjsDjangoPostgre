@@ -1,0 +1,9 @@
+[project]
+name = "loadtest"
+version = "0.1.0"
+description = "Locust load testing for backend"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "locust>=2.31.0",
+]
