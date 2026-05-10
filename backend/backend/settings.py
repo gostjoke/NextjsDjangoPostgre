@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'UserExtend',
     'mq',
     'OnlineStore',
+    'monitoring',
 ]
 
 # RabbitMQ 連線設定
@@ -200,6 +201,7 @@ os.makedirs(BASE_DIR / 'logs', exist_ok=True)
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
+    'monitoring.middleware.QPSMiddleware',  # QPS 統計 (放最前面, 不漏算)
     'django.middleware.security.SecurityMiddleware',
     "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',

@@ -28,4 +28,5 @@ urlpatterns = [
     path('api/userextend/', include('UserExtend.urls')),
     path('api/mq/', include('mq.urls')),
     path('api/store/', include('OnlineStore.urls')),
+    path('api/monitoring/', include('monitoring.urls')),
 ]

@@ -17,8 +17,10 @@ from locust import HttpUser, task, between, events
 TEST_USERNAME = "admin"
 TEST_PASSWORD = "admin123"
 
+"""
+uv run python -m locust -f locustfile.py --host http://127.0.0.1:8000
+"""
 
-# uv run python -m locust -f locustfile.py --host http://127.0.0.1:8000
 class ApiUser(HttpUser):
     """一般 API 使用者: 登入後操作各種 endpoint"""
 
@@ -90,20 +92,20 @@ class ApiUser(HttpUser):
     #     )
 
 
-class AnonymousUser(HttpUser):
-    """匿名使用者: 只打開放 endpoint, 測 throttle 限制"""
+# class AnonymousUser(HttpUser):
+#     """匿名使用者: 只打開放 endpoint, 測 throttle 限制"""
 
-    wait_time = between(1, 2)
-    weight = 1  # 比例: 相對於 ApiUser 出現的機率
+#     wait_time = between(1, 2)
+#     weight = 1  # 比例: 相對於 ApiUser 出現的機率
 
-    @task
-    def hit_login(self):
-        # 故意用錯密碼測登入端點承受度
-        self.client.post(
-            "/api/token/",
-            json={"username": "noone", "password": "wrong"},
-            name="[Anon] 嘗試登入",
-        )
+#     @task
+#     def hit_login(self):
+#         # 故意用錯密碼測登入端點承受度
+#         self.client.post(
+#             "/api/token/",
+#             json={"username": "noone", "password": "wrong"},
+#             name="[Anon] 嘗試登入",
+#         )
 
 
 # ===== 事件鉤子 (可選) =====
