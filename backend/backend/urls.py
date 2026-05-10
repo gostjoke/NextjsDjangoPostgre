@@ -27,4 +27,5 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/userextend/', include('UserExtend.urls')),
     path('api/mq/', include('mq.urls')),
+    path('api/store/', include('OnlineStore.urls')),
 ]

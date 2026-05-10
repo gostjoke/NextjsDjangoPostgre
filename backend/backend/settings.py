@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'UserExtend',
     'mq',
+    'OnlineStore',
 ]
 
 # RabbitMQ 連線設定
@@ -86,15 +87,15 @@ REST_FRAMEWORK = {
     # 分頁
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
-    # 流量限制
-    'DEFAULT_THROTTLE_CLASSES': [
-        'rest_framework.throttling.AnonRateThrottle',
-        'rest_framework.throttling.UserRateThrottle',
-    ],
-    'DEFAULT_THROTTLE_RATES': {
-        'anon': '60/min',
-        'user': '300/min',
-    },
+    # 流量限制 (壓測時可暫時拿掉, 正式環境再開回來)
+    # 'DEFAULT_THROTTLE_CLASSES': [
+    #     'rest_framework.throttling.AnonRateThrottle',
+    #     'rest_framework.throttling.UserRateThrottle',
+    # ],
+    # 'DEFAULT_THROTTLE_RATES': {
+    #     'anon': '60/min',
+    #     'user': '300/min',
+    # },
     # 時間格式
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S',
 }
@@ -158,6 +159,43 @@ JAZZMIN_UI_TWEAKS = {
     "actions_sticky_top": False,
 }
 
+# Logging - 讓 mq 的 log 顯示在 console
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '[{asctime}] {levelname} {name}: {message}',
+            'style': '{',
+            'datefmt': '%Y-%m-%d %H:%M:%S',
+        },
+    },
+    'handlers': {
+        # 印到 console
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        # 寫進檔案 (logs/mq.log)
+        'mq_file': {
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'logs' / 'mq.log',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        # mq app 的 log 同時印 console + 寫檔
+        'mq': {
+            'handlers': ['console', 'mq_file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}
+
+# 確保 logs 資料夾存在
+import os
+os.makedirs(BASE_DIR / 'logs', exist_ok=True)
 
 
 MIDDLEWARE = [

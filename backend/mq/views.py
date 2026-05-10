@@ -10,7 +10,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from .producer import publish
 
 
-class EHSMainTableDetailView(APIView):
+class MQtestView(APIView):
     # JWT 認證 + 需登入
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
