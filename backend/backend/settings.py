@@ -70,9 +70,10 @@ CACHES = {
     }
 }
 
-# session 也存 redis (可選, 不要可刪)
-SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
-SESSION_CACHE_ALIAS = 'default'
+# session 存 DB (預設, 最穩)
+# 若想存 Redis 改成 'django.contrib.sessions.backends.cached_db'
+# (cached_db 是 Redis + DB 雙保險, 不會因 Redis 掛掉就讓人無法登入)
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
 # DRF 設定
 REST_FRAMEWORK = {
@@ -201,7 +202,7 @@ os.makedirs(BASE_DIR / 'logs', exist_ok=True)
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
-    'monitoring.middleware.QPSMiddleware',  # QPS 統計 (放最前面, 不漏算)
+    # 'monitoring.middleware.QPSMiddleware',  # 暫時關掉測試速度
     'django.middleware.security.SecurityMiddleware',
     "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -297,3 +298,18 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Whitenoise: 壓縮 + 永久 cache header, DEBUG 也生效
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        # 把 CSS/JS 壓縮並加上 hash 檔名 (瀏覽器可永久 cache)
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
+# DEBUG 也讓 whitenoise 接管 (加快 admin static 載入)
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_AUTOREFRESH = True  # DEBUG 時自動偵測檔案變化

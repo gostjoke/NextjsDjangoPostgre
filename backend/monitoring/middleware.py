@@ -27,17 +27,19 @@ class QPSMiddleware:
         key = f'{self.KEY_PREFIX}:{now_second}'
 
         # 原子操作: incr + 設 TTL (用 Redis client 直接呼叫, 比 cache.incr 快)
+        # 用 fire-and-forget: 設極短 timeout, Redis 卡就直接跳過
         try:
             from django_redis import get_redis_connection
             conn = get_redis_connection('default')
-            # cache key prefix 要手動補上 (因為繞過 Django cache backend)
-            full_key = f':backend:{key}'  # KEY_PREFIX + version + key
+            # 設極短 socket timeout, 避免 middleware 拖慢請求
+            conn.connection_pool.connection_kwargs['socket_timeout'] = 0.05  # 50ms
+            full_key = f':backend:{key}'
             pipe = conn.pipeline()
             pipe.incr(full_key)
             pipe.expire(full_key, self.KEEP_SECONDS)
             pipe.execute()
         except Exception:
-            # Redis 掛掉不影響正常請求
+            # Redis 掛掉 / 超時都不影響正常請求
             pass
 
         # 繼續處理請求
