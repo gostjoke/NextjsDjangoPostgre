@@ -29,4 +29,5 @@ urlpatterns = [
     path('api/mq/', include('mq.urls')),
     path('api/store/', include('OnlineStore.urls')),
     path('api/monitoring/', include('monitoring.urls')),
+    path('api/approvals/', include('approvals.urls')),
 ]

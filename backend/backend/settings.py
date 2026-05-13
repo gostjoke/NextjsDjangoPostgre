@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'mq',
     'OnlineStore',
     'monitoring',
+    'approvals',
 ]
 
 # RabbitMQ 連線設定
