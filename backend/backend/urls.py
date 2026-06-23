@@ -30,4 +30,6 @@ urlpatterns = [
     path('api/store/', include('OnlineStore.urls')),
     path('api/monitoring/', include('monitoring.urls')),
     path('api/approvals/', include('approvals.urls')),
+    path('api/accounts/', include('accounts.urls')),
+    path('api/common/', include('common.urls')),
 ]
