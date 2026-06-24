@@ -198,3 +198,9 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+    def perform_destroy(self, instance):
+        return super().perform_destroy(instance)
+    
+    def perform_update(self, serializer):
+        return super().perform_update(serializer)
