@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+/* Ant Design Carousel dots 顏色覆寫 */
+.hero-dots li button {
+  background: rgba(255, 255, 255, 0.5) !important;
+}
+.hero-dots li.slick-active button {
+  background: #ffffff !important;
+}
