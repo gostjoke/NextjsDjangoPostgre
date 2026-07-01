@@ -29,6 +29,18 @@ class ApprovalRequestViewSet(ReadOnlyModelViewSet):
     queryset = ApprovalRequest.objects.select_related('flow', 'applicant').prefetch_related('records')
     serializer_class = ApprovalRequestSerializer
     permission_classes = [IsAuthenticated]
+    def get_queryset(self):
+        status_filter = self.request.query_params.get('status')
+        qs = super().get_queryset()
+        if status_filter:
+            qs = qs.filter(status=status_filter)
+        return qs
+    def perform_create(self, serializer):
+        serializer.save(applicant=self.request.user)
+        return super().perform_create(serializer)
+    def perform_update(self, serializer):
+        serializer.save()  # You can customize this if needed
+        return super().perform_update(serializer)
 
 
 # Inbox: 我待簽的
